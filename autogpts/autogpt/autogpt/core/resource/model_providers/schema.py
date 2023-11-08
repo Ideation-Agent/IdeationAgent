@@ -77,28 +77,16 @@ class AssistantFunctionCallDict(TypedDict):
     arguments: str
 
 
-class AssistantToolCall(BaseModel):
-    # id: str
-    type: Literal["function"]
-    function: AssistantFunctionCall
-
-
-class AssistantToolCallDict(TypedDict):
-    # id: str
-    type: Literal["function"]
-    function: AssistantFunctionCallDict
-
-
 class AssistantChatMessage(ChatMessage):
     role: Literal["assistant"]
     content: Optional[str]
-    tool_calls: Optional[list[AssistantToolCall]]
+    function_call: Optional[AssistantFunctionCall]
 
 
 class AssistantChatMessageDict(TypedDict, total=False):
     role: str
     content: str
-    tool_calls: list[AssistantToolCallDict]
+    function_call: AssistantFunctionCallDict
 
 
 class CompletionModelFunction(BaseModel):
@@ -133,12 +121,6 @@ class CompletionModelFunction(BaseModel):
             description=schema["description"],
             parameters=JSONSchema.parse_properties(schema["parameters"]),
         )
-
-    def fmt_line(self) -> str:
-        params = ", ".join(
-            f"{name}: {p.type.value}" for name, p in self.parameters.items()
-        )
-        return f"{self.name}: {self.description}. Params: ({params})"
 
 
 class ModelInfo(BaseModel):
@@ -345,7 +327,7 @@ class ChatModelProvider(ModelProvider):
         model_prompt: list[ChatMessage],
         model_name: str,
         completion_parser: Callable[[AssistantChatMessageDict], _T] = lambda _: None,
-        functions: Optional[list[CompletionModelFunction]] = None,
+        functions: list[CompletionModelFunction] = [],
         **kwargs,
     ) -> ChatModelResponse[_T]:
         ...

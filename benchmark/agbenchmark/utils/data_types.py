@@ -6,7 +6,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, constr, validator
+from pydantic import BaseModel, validator
 
 
 class DifficultyLevel(Enum):
@@ -109,7 +109,7 @@ class AgentBenchmarkConfig(BaseModel):
 
 class Info(BaseModel):
     difficulty: DifficultyLevel
-    description: constr(regex=r"^Tests if the agent can.*")
+    description: str
     side_effects: List[str]
 
     @validator("difficulty", pre=True)
@@ -165,20 +165,12 @@ class Ground(BaseModel):
     should_contain: Optional[List[str]] = None
     should_not_contain: Optional[List[str]] = None
     files: List[str]
-    case_sensitive: Optional[bool] = True
     eval: Eval
-
-
-class Category(str, Enum):
-    DATA = "data"
-    GENERALIST = "general"
-    CODING = "coding"
-    SCRAPE_SYNTHESIZE = "scrape_synthesize"
 
 
 class ChallengeData(BaseModel):
     name: str
-    category: List[Category]
+    category: List[str]
     task: str
     dependencies: List[str]
     cutoff: int
@@ -208,10 +200,8 @@ class ChallengeData(BaseModel):
 
         with open(json_path, "r") as file:
             data = json.load(file)
-        try:
-            return ChallengeData(**data)
-        except:
-            test = "ok"
+
+        return ChallengeData(**data)
 
     def challenge_from_datum(self, file_datum: list[dict[str, Any]]) -> "ChallengeData":
         same_task_data = {

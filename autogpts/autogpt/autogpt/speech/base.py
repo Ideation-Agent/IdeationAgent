@@ -4,6 +4,10 @@ from __future__ import annotations
 import abc
 import re
 from threading import Lock
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from autogpt.config import Config
 
 
 class VoiceBase:
@@ -11,7 +15,7 @@ class VoiceBase:
     Base class for all voice classes.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, config: Config):
         """
         Initialize the voice class.
         """
@@ -20,7 +24,7 @@ class VoiceBase:
         self._api_key = None
         self._voices = []
         self._mutex = Lock()
-        self._setup(*args, **kwargs)
+        self._setup(config)
 
     def say(self, text: str, voice_index: int = 0) -> bool:
         """
@@ -39,7 +43,7 @@ class VoiceBase:
             return self._speech(text, voice_index)
 
     @abc.abstractmethod
-    def _setup(self, *args, **kwargs) -> None:
+    def _setup(self, config: Config) -> None:
         """
         Setup the voices, API key, etc.
         """

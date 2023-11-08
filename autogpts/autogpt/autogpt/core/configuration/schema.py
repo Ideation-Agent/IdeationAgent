@@ -9,7 +9,6 @@ from pydantic import BaseModel, Field
 @functools.wraps(Field)
 def UserConfigurable(*args, **kwargs):
     return Field(*args, **kwargs, user_configurable=True)
-    # TODO: use this to auto-generate docs for the application configuration
 
 
 class SystemConfiguration(BaseModel):

@@ -1,13 +1,12 @@
 import functools
 import re
-from typing import Any, Callable, ParamSpec, TypeVar
+from typing import Any, Callable
 from urllib.parse import urljoin, urlparse
 
-P = ParamSpec("P")
-T = TypeVar("T")
+from requests.compat import urljoin
 
 
-def validate_url(func: Callable[P, T]) -> Callable[P, T]:
+def validate_url(func: Callable[..., Any]) -> Any:
     """The method decorator validate_url is used to validate urls for any command that requires
     a url as an argument"""
 

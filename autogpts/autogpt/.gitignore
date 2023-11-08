@@ -17,7 +17,6 @@ log-ingestion.txt
 *.mp3
 mem.sqlite3
 venvAutoGPT
-data/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -161,6 +160,9 @@ openai/
 
 # news
 CURRENT_BULLETIN.md
+
+# AgBenchmark
+agbenchmark_config/reports/
 
 # Nodejs
 package-lock.json

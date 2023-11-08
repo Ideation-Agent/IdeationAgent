@@ -1,10 +1,8 @@
-from pathlib import Path
-
 import yaml
 from colorama import Fore
 
 
-def validate_yaml_file(file: str | Path):
+def validate_yaml_file(file: str):
     try:
         with open(file, encoding="utf-8") as fp:
             yaml.load(fp.read(), Loader=yaml.FullLoader)

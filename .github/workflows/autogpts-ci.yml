@@ -2,19 +2,20 @@ name: Valid AutoGPTs
 
 on:
   workflow_dispatch:
+    branches: [master]
   schedule:
     - cron: '0 8 * * *'
   push:
-    branches: [ master, development, ci-test* ]
+    branches: [master, ci-test*]
   pull_request:
-    branches: [ master, development, release-* ]
+    branches: [stable, master, release-*]
 
 jobs:
   run-tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        agent-name: [ autogpt, forge ]
+        agent-name: [ forge ]
       fail-fast: false
     timeout-minutes: 20
     steps:
@@ -37,9 +38,10 @@ jobs:
           curl -sSL https://install.python-poetry.org | python -
 
       - name: Run regression tests
+        working-directory: ./autogpts/${{ matrix.agent-name }}/
         run: |
-          ./run agent start ${{ matrix.agent-name }}
-          cd autogpts/${{ matrix.agent-name }}
+          sh run &
+          sleep 20
           poetry run agbenchmark --mock
           poetry run agbenchmark --test=WriteFile
         env:

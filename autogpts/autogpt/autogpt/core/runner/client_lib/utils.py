@@ -1,7 +1,7 @@
 import asyncio
 import functools
 from bdb import BdbQuit
-from typing import Any, Callable, Coroutine, ParamSpec, TypeVar
+from typing import Callable, ParamSpec, TypeVar
 
 import click
 
@@ -53,9 +53,9 @@ def handle_exceptions(
     return wrapped
 
 
-def coroutine(f: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, T]:
+def coroutine(f):
     @functools.wraps(f)
-    def wrapper(*args: P.args, **kwargs: P.kwargs):
+    def wrapper(*args, **kwargs):
         return asyncio.run(f(*args, **kwargs))
 
     return wrapper

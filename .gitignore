@@ -1,5 +1,4 @@
 ## Original ignores
-.github_access_token
 autogpt/keys.py
 autogpt/*.json
 auto_gpt_workspace/*
@@ -163,8 +162,8 @@ CURRENT_BULLETIN.md
 agbenchmark/reports/
 
 # Nodejs
-package-lock.json
-package.json
+# package-lock.json
+# package.json
 
 # Allow for locally private items
 # private
@@ -172,4 +171,3 @@ pri*
 # ignore
 ig*
 .github_access_token
-arena/TestAgent.json

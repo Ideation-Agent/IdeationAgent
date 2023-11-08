@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Literal, Optional
 
 if TYPE_CHECKING:
-    from autogpt.config import Config
+    from autogpt.config import AIConfig, Config
     from autogpt.llm.base import ChatModelResponse, ChatSequence
     from autogpt.memory.vector import VectorMemory
     from autogpt.models.command_registry import CommandRegistry
@@ -32,18 +32,19 @@ from autogpt.models.context_item import ContextItem
 from .agent import execute_command, extract_command
 from .base import BaseAgent
 from .features.context import ContextMixin
-from .features.file_workspace import FileWorkspaceMixin
+from .features.workspace import WorkspaceMixin
 
 logger = logging.getLogger(__name__)
 
 
-class PlanningAgent(ContextMixin, FileWorkspaceMixin, BaseAgent):
+class PlanningAgent(ContextMixin, WorkspaceMixin, BaseAgent):
     """Agent class for interacting with AutoGPT."""
 
     ThoughtProcessID = Literal["plan", "action", "evaluate"]
 
     def __init__(
         self,
+        ai_config: AIConfig,
         command_registry: CommandRegistry,
         memory: VectorMemory,
         triggering_prompt: str,
@@ -51,6 +52,7 @@ class PlanningAgent(ContextMixin, FileWorkspaceMixin, BaseAgent):
         cycle_budget: Optional[int] = None,
     ):
         super().__init__(
+            ai_config=ai_config,
             command_registry=command_registry,
             config=config,
             default_cycle_instruction=triggering_prompt,
@@ -221,14 +223,14 @@ class PlanningAgent(ContextMixin, FileWorkspaceMixin, BaseAgent):
 
         self.log_cycle_handler.log_count_within_cycle = 0
         self.log_cycle_handler.log_cycle(
-            self.ai_profile.ai_name,
+            self.ai_config.ai_name,
             self.created_at,
             self.cycle_count,
             self.event_history.episodes,
             "event_history.json",
         )
         self.log_cycle_handler.log_cycle(
-            self.ai_profile.ai_name,
+            self.ai_config.ai_name,
             self.created_at,
             self.cycle_count,
             prompt.raw(),
@@ -247,7 +249,7 @@ class PlanningAgent(ContextMixin, FileWorkspaceMixin, BaseAgent):
         if command_name == "human_feedback":
             result = ActionInterruptedByHuman(feedback=user_input)
             self.log_cycle_handler.log_cycle(
-                self.ai_profile.ai_name,
+                self.ai_config.ai_name,
                 self.created_at,
                 self.cycle_count,
                 user_input,
@@ -276,7 +278,7 @@ class PlanningAgent(ContextMixin, FileWorkspaceMixin, BaseAgent):
 
                 result = ActionSuccessResult(outputs=return_value)
             except AgentException as e:
-                result = ActionErrorResult.from_exception(e)
+                result = ActionErrorResult(reason=e.message, error=e)
 
             result_tlength = count_string_tokens(str(result), self.llm.name)
             memory_tlength = count_string_tokens(
@@ -331,7 +333,7 @@ class PlanningAgent(ContextMixin, FileWorkspaceMixin, BaseAgent):
         response = command_name, arguments, assistant_reply_dict
 
         self.log_cycle_handler.log_cycle(
-            self.ai_profile.ai_name,
+            self.ai_config.ai_name,
             self.created_at,
             self.cycle_count,
             assistant_reply_dict,

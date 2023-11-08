@@ -1,3 +1,78 @@
+# IdeationAgent - AutoGPT Arena Hackathon Submission
+
+Welcome to **IdeationAgent**, our unique solution for brainstorming potential business ideas, crafted specially for the AutoGPT Arena Hackathon.
+
+![Banner Image](https://github.com/Ideation-Agent/IdeationAgent/blob/master/autogpts/IdeationAgent/img/hackathon_banner.png?raw=true)
+
+## Overview
+
+**IdeationAgent** aims to revolutionize the way entrepreneurs brainstorm business ideas. By just providing a LinkedIn URL and your interests, our platform leverages the power of AI to simulate a brainstorming session with four AI agents:
+1. **CASEY(Researcher)** - Provides data and insights related to the idea.
+2. **PAT(Devil's Advocate)** - Questions the feasibility and challenges of an idea.
+3. **Lily(Angel's Advocate)** - Supports and finds potential in every idea.
+4. **Steve(Cheif of Staff)** - Summarize discussions, uncover insights, and deliver them to the CEO - you. .
+
+Together, these AI personas ensure a comprehensive discussion, covering all angles of a potential business idea.
+
+## Features
+
+- **User Profile Analysis**: Extracts user's skills, experiences, and expertise from LinkedIn.
+- **Dynamic Discussion Simulation**: AI agents interact with each other to provide a 360° view. 
+- **Human in the Loop**: The CEO and the domain expert - you, can step in and lead the discussion.
+- **Real-time Insights**: Instantaneous fact-based insights from our Researcher agent.
+- **Completed Business Plan**: Summarize discussions to provide a completed business plan.
+
+## Getting Started
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/Ideation-Agent/IdeationAgent
+    ```
+
+2. Navigate to the directory:
+    ```bash
+    cd IdeationAgent
+    ```
+
+3. Copy **autogpts/IdeationAgent/.env.template** to **.env** and fill it out to let your agent surf the internet and login linkedin. 
+- OPENAI_API_KEY= can be found in [here](https://platform.openai.com/)
+- BROWSERLESS_API_KEY= can be found in [here](https://www.browserless.io/)
+- SERP_API_KEY= can be found in [here](https://serpapi.com/)
+- LINKEDIN_EMAIL= your linkedin ID
+- LINKEDIN_PASSWORD= your linkedin PW
+
+
+4. Start the program (TBD):
+    ```bash
+    ./run agent IdeationAgent 
+    ```
+
+5. Watch the magic happen!
+
+## Demo
+
+Check out a demo video[here](LINK_TO_LIVE_DEMO). 
+
+## Team
+
+- [Jongwon Park](https://github.com/pjw1)
+- [Sumin Hwang](https://github.com/smhwang0109)
+- [Juhyun Isaac Lee](https://www.linkedin.com/in/isaac-lee-a68b9931/)
+
+## Feedback and Contribution
+
+Feel free to [raise an issue](https://github.com/Ideation-Agent/IdeationAgent) or submit a pull request!
+
+## Acknowledgements
+
+We thank the organizers of the AutoGPT Arena Hackathon for this amazing opportunity.
+
+## License
+
+This project is licensed under the MIT License.
+
+---
+
 # 🌟 AutoGPT: the heart of the open-source agent ecosystem
 
 [![Discord Follow](https://dcbadge.vercel.app/api/server/autogpt?style=flat)](https://discord.gg/autogpt) [![GitHub Repo stars](https://img.shields.io/github/stars/Significant-Gravitas/AutoGPT?style=social)](https://github.com/Significant-Gravitas/AutoGPT/stargazers) [![Twitter Follow](https://img.shields.io/twitter/follow/auto_gpt?style=social)](https://twitter.com/Auto_GPT) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -41,7 +116,7 @@ Want to build your own groundbreaking agent using AutoGPT? 🛠️ There are thr
 
 ### 🏗️ the Forge
 
-**Forge your future!** The `forge` is your innovation lab. All the boilerplate code is already handled, letting you channel all your creativity into building a revolutionary agent. It's more than a starting point, it's a launchpad for your ideas. All tutorials are located [here](https://medium.com/@aiedge/autogpt-forge-e3de53cc58ec).
+**Forge your future!** The `forge` is your innovation lab. All the boilerplate code is already handled, letting you channel all your creativity into building a revolutionary agent. It's more than a starting point, it's a launchpad for your ideas. All tutorials are located [here](https://github.com/Significant-Gravitas/AutoGPT/tree/master/autogpts/forge/tutorials).
 
 📘 [Learn More](https://github.com/Significant-Gravitas/AutoGPT/tree/master/autogpts/forge)
 
@@ -66,8 +141,6 @@ Want to build your own groundbreaking agent using AutoGPT? 🛠️ There are thr
 ### 🤔 Questions? Problems? Suggestions?
 
 #### Get help - [Discord 💬](https://discord.gg/autogpt)
-
-[![Join us on Discord](https://invidget.switchblade.xyz/autogpt)](https://discord.gg/autogpt)
 
 To report a bug or request a feature, create a [GitHub Issue](https://github.com/Significant-Gravitas/AutoGPT/issues/new/choose). Please ensure someone else hasn’t created an issue for the same topic.
 

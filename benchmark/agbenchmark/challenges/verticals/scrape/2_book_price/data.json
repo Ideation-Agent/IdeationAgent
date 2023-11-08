@@ -1,13 +1,13 @@
 {
     "category": [
-        "scrape_synthesize",
+        "retrieval",
         "general"
     ],
     "cutoff": 60,
     "dependencies": [
         "TestSearch"
     ],
-    "eval_id": "cd96e6b2-779d-4a4a-8367-d520023e27ae",
+    "eval_id": "525001ed-8b45-4405-9e56-ce4423314294",
     "ground": {
         "answer": "\u00a325.89",
         "eval": {
@@ -22,7 +22,7 @@
         "should_not_contain": []
     },
     "info": {
-        "description": "Tests if the agent can retrieve a specific information from a website.",
+        "description": "Specifies specific website to retrieve website from.",
         "difficulty": "basic",
         "side_effects": []
     },

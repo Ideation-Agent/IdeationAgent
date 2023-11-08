@@ -1,13 +1,12 @@
 {
     "category": [
-        "coding",
-        "general"
+        "coding"
     ],
     "cutoff": 90,
     "dependencies": [
         "TestPasswordGenerator"
     ],
-    "eval_id": "029c1e6f-2b36-451e-bca6-60063b827d2e",
+    "eval_id": "6ace62be-6c18-431a-947f-72fb20984b58",
     "ground": {
         "answer": "The correct python file is written and organizes the files accordingly",
         "eval": {
@@ -20,7 +19,7 @@
         "should_not_contain": []
     },
     "info": {
-        "description": "Tests if the agent can create a file organizer.",
+        "description": "Tests ability for the agent to create a random password generator.",
         "difficulty": "basic",
         "side_effects": []
     },

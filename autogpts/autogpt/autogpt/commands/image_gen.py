@@ -16,7 +16,6 @@ from PIL import Image
 
 from autogpt.agents.agent import Agent
 from autogpt.command_decorator import command
-from autogpt.core.utils.json_schema import JSONSchema
 
 logger = logging.getLogger(__name__)
 
@@ -25,11 +24,11 @@ logger = logging.getLogger(__name__)
     "generate_image",
     "Generates an Image",
     {
-        "prompt": JSONSchema(
-            type=JSONSchema.Type.STRING,
-            description="The prompt used to generate the image",
-            required=True,
-        ),
+        "prompt": {
+            "type": "string",
+            "description": "The prompt used to generate the image",
+            "required": True,
+        },
     },
     lambda config: bool(config.image_provider),
     "Requires a image provider to be set.",
@@ -44,7 +43,7 @@ def generate_image(prompt: str, agent: Agent, size: int = 256) -> str:
     Returns:
         str: The filename of the image
     """
-    filename = agent.workspace.root / f"{str(uuid.uuid4())}.jpg"
+    filename = agent.legacy_config.workspace_path / f"{str(uuid.uuid4())}.jpg"
 
     # DALL-E
     if agent.legacy_config.image_provider == "dalle":

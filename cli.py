@@ -214,12 +214,12 @@ def agent():
 @agent.command()
 @click.argument("agent_name")
 def create(agent_name):
-    """Create's a new agent with the agent name provided"""
+    """Create's a new agent with the agent name provieded"""
     import os
     import re
     import shutil
 
-    if not re.match("\w*$", agent_name):
+    if not re.match("^[a-zA-Z0-9_-]*$", agent_name):
         click.echo(
             click.style(
                 f"😞 Agent name '{agent_name}' is not valid. It should not contain spaces or special characters other than -_",
@@ -229,11 +229,9 @@ def create(agent_name):
         return
     try:
         new_agent_dir = f"./autogpts/{agent_name}"
-        new_agent_name = f"{agent_name.lower()}.json"
+        agent_json_file = f"./arena/{agent_name}.json"
 
-        existing_arena_files = [name.lower() for name in os.listdir("./arena/")]
-
-        if not os.path.exists(new_agent_dir) and not new_agent_name in existing_arena_files:
+        if not os.path.exists(new_agent_dir) and not os.path.exists(agent_json_file):
             shutil.copytree("./autogpts/forge", new_agent_dir)
             click.echo(
                 click.style(
@@ -250,7 +248,7 @@ def create(agent_name):
         else:
             click.echo(
                 click.style(
-                    f"😞 Agent '{agent_name}' already exists. Enter a different name for your agent, the name needs to be unique regardless of case",
+                    f"😞 Agent '{agent_name}' already exists. Enter a different name for your agent",
                     fg="red",
                 )
             )
@@ -260,8 +258,7 @@ def create(agent_name):
 
 @agent.command()
 @click.argument("agent_name")
-@click.option("--no-setup", is_flag=True, help="Rebuilds your poetry env")
-def start(agent_name, no_setup):
+def start(agent_name):
     """Start agent command"""
     import os
     import subprocess
@@ -269,16 +266,10 @@ def start(agent_name, no_setup):
     script_dir = os.path.dirname(os.path.realpath(__file__))
     agent_dir = os.path.join(script_dir, f"autogpts/{agent_name}")
     run_command = os.path.join(agent_dir, "run")
-    run_bench_command = os.path.join(agent_dir, "run_benchmark")
-    if os.path.exists(agent_dir) and os.path.isfile(run_command) and os.path.isfile(run_bench_command):
+    if os.path.exists(agent_dir) and os.path.isfile(run_command):
         os.chdir(agent_dir)
-        if not no_setup:
-            setup_process = subprocess.Popen(["./setup"], cwd=agent_dir)
-            setup_process.wait()
-        subprocess.Popen(["./run_benchmark", "serve"], cwd=agent_dir)
-        click.echo(f"Benchmark Server starting please wait...")
         subprocess.Popen(["./run"], cwd=agent_dir)
-        click.echo(f"Agent '{agent_name}' starting please wait...")
+        click.echo(f"Agent '{agent_name}' started")
     elif not os.path.exists(agent_dir):
         click.echo(
             click.style(
@@ -293,6 +284,26 @@ def start(agent_name, no_setup):
                 fg="red",
             )
         )
+    front_dir = os.path.join(script_dir, "frontend")
+    front_run_command = os.path.join(front_dir, "run")
+    if os.path.exists(front_dir) and os.path.isfile(front_run_command):
+        os.chdir(front_dir)
+        subprocess.Popen(["./run"], cwd=front_dir)
+        click.echo(f"Frontend started")
+    elif not os.path.exists(front_dir):
+        click.echo(
+            click.style(
+                f"😞 Frontend does not exist. Please create the agent first.",
+                fg="red",
+            )
+        )
+    else:
+        click.echo(
+            click.style(
+                f"😞 Run command does not exist in Frontend directory.",
+                fg="red",
+            )
+        )
 
 
 @agent.command()
@@ -303,24 +314,14 @@ def stop():
     import subprocess
 
     try:
-        pids = subprocess.check_output(["lsof", "-t", "-i", ":8000"]).split()
-        if isinstance(pids, int):
-            os.kill(int(pids), signal.SIGTERM)
-        else:
-            for pid in pids:
-                os.kill(int(pid), signal.SIGTERM)
-    except subprocess.CalledProcessError:
-        click.echo("No process is running on port 8000")
+        pid = int(subprocess.check_output(["lsof", "-t", "-i", ":8000"]))
+        os.kill(pid, signal.SIGTERM)
+        click.echo("Agent stopped")
+    except subprocess.CalledProcessError as e:
+        click.echo("Error: Unexpected error occurred.")
+    except ProcessLookupError:
+        click.echo("Error: No process with the specified PID was found.")
 
-    try:
-        pids = int(subprocess.check_output(["lsof", "-t", "-i", ":8080"]))
-        if isinstance(pids, int):
-            os.kill(int(pids), signal.SIGTERM)
-        else:
-            for pid in pids:
-                os.kill(int(pid), signal.SIGTERM)
-    except subprocess.CalledProcessError:
-        click.echo("No process is running on port 8080")
 
 @agent.command()
 def list():
@@ -887,6 +888,7 @@ def update(agent_name, hash, branch):
                 fg="green",
             )
         )
+
 
 if __name__ == "__main__":
     cli()

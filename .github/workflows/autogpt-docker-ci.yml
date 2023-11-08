@@ -2,15 +2,17 @@ name: AutoGPT Docker CI
 
 on:
   push:
-    branches: [ master, development ]
+    branches: [ master ]
     paths:
       - 'autogpts/autogpt/**'
       - '!autogpts/autogpt/tests/vcr_cassettes'
+      - '!autogpts/autogpt/tests/challenges/current_score.json'
   pull_request:
-    branches: [ master, development, release-* ]
+    branches: [ master, release-*, stable ]
     paths:
       - 'autogpts/autogpt/**'
       - '!autogpts/autogpt/tests/vcr_cassettes'
+      - '!autogpts/autogpt/tests/challenges/current_score.json'
 
 concurrency:
   group: ${{ format('autogpt-docker-ci-{0}', github.head_ref && format('pr-{0}', github.event.pull_request.number) || github.sha) }}
@@ -61,10 +63,10 @@ jobs:
 
         build_type: ${{ matrix.build-type }}
 
-        prod_branch: master
-        dev_branch: development
+        prod_branch: stable
+        dev_branch: master
         repository: ${{ github.repository }}
-        base_branch: ${{ github.ref_name != 'master' && github.ref_name != 'development' && 'development' || 'master' }}
+        base_branch: ${{ github.ref_name != 'master' && github.ref_name != 'stable' && 'master' || 'stable' }}
 
         current_ref: ${{ github.ref_name }}
         commit_hash: ${{ github.event.after }}
@@ -117,7 +119,7 @@ jobs:
           test_output=$(
             docker run --env CI --env OPENAI_API_KEY \
               --entrypoint poetry ${{ env.IMAGE_NAME }} run \
-              pytest -v --cov=autogpt --cov-branch --cov-report term-missing \
+              run pytest -v --cov=autogpt --cov-branch --cov-report term-missing \
               --numprocesses=4 --durations=10 \
               tests/unit tests/integration 2>&1
           )

@@ -1,5 +1,5 @@
 #!/bin/bash
 
-kill $(lsof -t -i :5000)
-
-flutter run -d chrome --web-port 5000
+npm install
+npm run build
+serve -s build -l 8005
