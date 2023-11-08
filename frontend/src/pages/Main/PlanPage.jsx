@@ -7,18 +7,14 @@ import {
 import AllFullRow from "components/utils/AllFullRow";
 import Block from "components/utils/Block";
 import { LayerAlign } from "components/utils/WidgetUtils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function PlanPage({ data }) {
-  const [datas, setDatas] = useState(null);
+  const newData = Object.entries(data).map(([key, value]) => {
+    return { title: key, content: value };
+  });
 
-  useEffect(() => {
-    console.log(data);
-    const newData = Object.entries(data).map(([key, value]) => {
-      return { title: key, content: value };
-    });
-    setDatas(newData);
-  }, data);
+  const [datas, setDatas] = useState(newData);
 
   return (
     <>

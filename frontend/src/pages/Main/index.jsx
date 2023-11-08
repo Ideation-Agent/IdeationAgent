@@ -68,6 +68,7 @@ function MainPage() {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [brainPageIndex, setBrainPageIndex] = useState(0);
 
+  const [resultMessages, setResultMessages] = useState(null);
   const [conclusionData, setConclusionData] = useState(null);
 
   const api = new ServerProvider();
@@ -101,6 +102,27 @@ function MainPage() {
 
     const newIdeas = result.ideas;
     setIdeas([...newIdeas]);
+  };
+
+  const getConclusion = async () => {
+    const dialog = [];
+
+    resultMessages.forEach((value) => {
+      const newDialog = {};
+      newDialog[value.user] = value.text;
+      dialog.push(newDialog);
+    });
+
+    const response = await api.conclusion({
+      log: {
+        service_name: ideas[selectedIndex].service_name,
+        problem: ideas[selectedIndex].problem,
+        service_idea: ideas[selectedIndex].solution,
+        dialog,
+      },
+    });
+
+    setConclusionData(response);
   };
 
   return (
@@ -153,13 +175,12 @@ function MainPage() {
                     selectedIndex={selectedIndex}
                     setSelectedIndex={setSelectedIndex}
                     brainPageIndex={brainPageIndex}
-                    parentIndex={pageIndex}
                     reGen={generateIdeas}
-                    setConclusionData={setConclusionData}
+                    setResultMessages={setResultMessages}
                   />
                 );
               case 3:
-                return <PlanPage data={conclusionData}/>;
+                return <PlanPage data={conclusionData} />;
               default:
                 return <>null</>;
             }
@@ -203,6 +224,7 @@ function MainPage() {
                   if (brainPageIndex === 0) {
                     setBrainPageIndex(brainPageIndex + 1);
                   } else {
+                    await getConclusion();
                     setPageIndex(pageIndex + 1);
                   }
                   break;

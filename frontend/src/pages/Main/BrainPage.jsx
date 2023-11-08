@@ -97,10 +97,8 @@ function BrainPage({
   selectedIndex,
   setSelectedIndex,
   brainPageIndex,
-  setBrainPageIndex,
-  parentIndex,
   reGen,
-  setConclusionData,
+  setResultMessages,
 }) {
   const [isTalking, setIsTalking] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
@@ -129,8 +127,6 @@ function BrainPage({
       }
     });
 
-    console.log('speaker_list');
-    console.log(speaker_list);
     const response = await api.dialog({
       log: {
         service_name: ideas[selectedIndex].service_name,
@@ -138,23 +134,9 @@ function BrainPage({
         service_idea: ideas[selectedIndex].service_idea,
         dialog,
       },
-
       input,
       speaker: speaker_list,
     });
-
-    const test = {
-      "log": {
-          "service_name": "AI Resume Builder",
-          "problem": "Finding a job can be a daunting task, especially update their resumes to fit each job application.",
-          "service_idea": "An AI-powered platform that automatically generate requirements, saving time and improving accuracy.",
-          "dialog": [
-               {"0": "I have some concerns about the AI-powered resume builder idea."}
-          ]
-        },
-      "human_input": "",
-      "speaker_list": []
-    }
 
     if (response) {
       setIsTalking(true);
@@ -163,9 +145,10 @@ function BrainPage({
       let newMessages = [...messages];
       if (input !== "") {
         newMessages.push({ user: 4, text: input });
-      } 
+      }
       newMessages.push(message);
       setMessages(newMessages);
+      setResultMessages(newMessages);
 
       if (response.is_finished) {
         setIsTalking(false);
@@ -173,33 +156,10 @@ function BrainPage({
     }
   };
 
-  const getConclusion = async () => {
-    const dialog = [];
-
-    messages.forEach((value) => {
-      const newDialog = {};
-      newDialog[value.user] = value.text;
-      dialog.push(newDialog);
-    });
-
-    const response = await api.conclusion({
-      log: {
-        service_name: ideas[selectedIndex].service_name,
-        problem: ideas[selectedIndex].problem,
-        service_idea: ideas[selectedIndex].solution,
-        dialog,
-      },
-    });
-
-    console.log(response)
-
-    setConclusionData(response);
-  };
-
   useEffect(() => {
     if (brainPageIndex === 1) {
       if (!isTyping) {
-        if(isTalking) {
+        if (isTalking) {
           console.log("Second");
 
           getChatting({ input: "" });
@@ -219,12 +179,6 @@ function BrainPage({
       getChatting({ input: "" });
     }
   }, [brainPageIndex]);
-
-  useEffect(() => {
-    if(parentIndex === 3) {
-      getConclusion();
-    }
-  }, [parentIndex]);
 
   if (brainPageIndex === 0) {
     return (
@@ -304,7 +258,7 @@ function BrainPage({
           <Block w={21} />
           <Column>
             <Profile color={COLORS.yellow_1}>
-                <Pat />
+              <Pat />
             </Profile>
             <ProfileText>Pat(VC)</ProfileText>
           </Column>
@@ -312,21 +266,21 @@ function BrainPage({
           <Block w={108} />
           <Column>
             <Profile color={COLORS.blue_1}>
-                <Lily />
+              <Lily />
             </Profile>
             <ProfileText>Lily(VC)</ProfileText>
           </Column>
           <Block w={108} />
           <Column>
             <Profile color={COLORS.red_1}>
-                <Steve />
+              <Steve />
             </Profile>
             <ProfileText>Steve(Tech Expert)</ProfileText>
           </Column>
           <Block w={108} />
           <Column>
             <Profile color={COLORS.purple_1}>
-                <Casey />
+              <Casey />
             </Profile>
             <ProfileText>Casey(Consumer)</ProfileText>
           </Column>
@@ -363,34 +317,37 @@ function BrainPage({
           <Block h={80} />
         </ChatContainer>
 
-        {!isTalking ?
-            <>
-                <ChatInput
-                chatting={chatting}
-                setChatting={setChatting}
-                seletedList={selectedList}
-                setSelectedList={setSelectedList}
-                onSubmit={async () => {
-                    const message = { user: 4, text: chatting };
-                    let newMessages = [...messages];
-                    newMessages.push(message);
-                    setMessages(newMessages);
-        
-                    console.log("Input GO");
-        
-                    await getChatting({ input: chatting });
-                    setChatting("");
-                    setSelectedList(Array(4).fill(false));
-                }}
-                />
-                <Block h={15} />
-                <div style={{ alignSelf: "end" }}>
-                    <RoundBtn onClick={async () => {
-                        await getChatting({ input: '' });
-                    }}>skip my turn</RoundBtn>
-                </div>
-            </>
-        : null }
+        {!isTalking ? (
+          <>
+            <ChatInput
+              chatting={chatting}
+              setChatting={setChatting}
+              seletedList={selectedList}
+              setSelectedList={setSelectedList}
+              onSubmit={async () => {
+                const message = { user: 4, text: chatting };
+                let newMessages = [...messages];
+                newMessages.push(message);
+                setMessages(newMessages);
+
+                console.log("Input GO");
+
+                await getChatting({ input: chatting });
+                setChatting("");
+                setSelectedList(Array(4).fill(false));
+              }}
+            />
+            <Block h={15} />
+            <div style={{ alignSelf: "end" }}>
+              <RoundBtn
+                onClick={async () => {
+                  await getChatting({ input: "" });
+                }}>
+                skip my turn
+              </RoundBtn>
+            </div>
+          </>
+        ) : null}
       </>
     );
   }
